@@ -37,6 +37,9 @@ p   =   "../data/processed/"
 l   =   listdir(p)
 fileList    =   [p+f for f in l]
 
+with open("../fileList.txt",'wb') as fl:
+    fl.write('\n'.join(fileList))
+
 #for each document, add to a list
 for fi in fileList:
     with open(fi,'rb') as d:
@@ -45,7 +48,7 @@ for fi in fileList:
     
 
 #D is total number of docs to show to the model, K is number of topics
-goal_its    =   10              #number of iterations to run the LDA process
+goal_its    =   80              #number of iterations to run the LDA process
 corp_size   =   len(doc_list)   #number of documents in the corpus
 D           =   corp_size       #number of documents expected to see
 K           =   70              #Default topic value, if none given in parameters
