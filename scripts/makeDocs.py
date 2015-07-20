@@ -9,7 +9,11 @@ import sys
 from os import listdir
 
 def main():
-    makeDocuments("../data/raw/")
+    try:
+        if sys.argv[1] == "num2name":
+            num2name("../data/out/topics.txt")
+    except:
+        makeDocuments("../data/raw/")
     
 def writeDoc(fields,rating):
     idx = int(fields[2]) - 1
@@ -17,16 +21,18 @@ def writeDoc(fields,rating):
         out = ("like_"+fields[1]+" ",rating[idx])
     elif int(fields[2]) < 3:
         out = ("dislike_"+fields[1]+" ",rating[idx])
+    elif int(fields[2]) == 3:
+        out = ("neutral_"+fields[1]+" ",rating[idx])
     else:
         out = ("",0)
     return out
     
     
 def makeDocuments(inFolder):
-    rating  = [3,1,0,1,3]
-    files   = listdir(inFolder+"base/")
+    rating  = [3,1,1,1,3]
+    files   = listdir(inFolder+"train/")
     for fi in files:
-        with open(inFolder+"base/"+fi,'rb') as f:
+        with open(inFolder+"train/"+fi,'rb') as f:
             lines   = f.read().split("\n")
         for line in lines:
             fields  = line.split("\t")
@@ -52,13 +58,19 @@ def num2name(topicsTxt):
         movies  = f2.read().split("\n")
     lookup  = {}
     for m in movies:
-        sp  = m.split("\t")
-        lookup[m[0]]    = m[1]
+        sp  = m.split("|")
+        if len(sp) > 1:
+            lookup[sp[0]]    = sp[1]
+    out = []
     for y in x:
-        if x.find("topic") < 0:
-            num     = +x[x.find("_")+1]
-            print lookup[num]
-            stop=raw_input("")
+        if (y.find("topic") < 0) and (not (y=='')):
+            
+            num     = y[y.find("_")+1:y.find("\t")]
+            out.append(y[:y.find("_")]+lookup[num])
+        else:
+            out.append(y)                
+    with open(topicsTxt.replace("topics","topicsNames"),'wb') as f:
+        f.write('\n'.join(out))
     
 if __name__ == "__main__":
     main()

@@ -32,89 +32,50 @@ def read_dict(filename):
         count+=1
     return diction
     
-#read records from the the omim text file
-def read_omim_recs(filename):
-    mystr       = open(filename).read()
-    doc_list    = []
-    i2          = 0
-    while i2 > -1:
-        i1 = mystr.find("*RECORD",i2)
-        try:    
-            i2 = mystr.find("*RECORD",i1+1)
-            rec= mystr[i1:i2]
-            doc_list.append(rec)
-        except ValueError as err:
-            print err
-            i2 = -1
-    return doc_list
-    
-def read_in_wiki_pickle(pickleString):
-    with open(pickleString,'rb') as titleP:
-        wikiDocs    =   cPickle.load(titleP)
-    return wikiDocs
 
 
+def read_topic_dist(gammaPickle,fileList):
 
-def read_topic_dist(gammaPickle):
-
+    with open(fileList,'rb') as fl:
+        x       = fl.read().split("\n")
+        user    = [u[u.rfind("/")+1:] for u in x]
     with open(gammaPickle,'rb') as gammaP:
         docTopics   =   cPickle.load(gammaP)
 
-    return docTopics
+    out = {}
+    for count in range(len(user)):
+        out[user[count]]   = docTopics[count]
+        
+    return out
 
-def getAncestorMap(omim,d2d):
-    pass
 
 ###############################################################################
 #SIMILARITY FUNCTIONS    
 ###############################################################################
 
     
-def find_index(nameString,docNames):
-    nameString = nameString.lower()
-    print nameString
-    count=0
-    for i in docNames:
-        i = i.lower()
-        if i.find(nameString) > -1:
-            print i, count
-            yn  = str(raw_input("Is this the record you'd like to match? (y/n)\n").lower())
-            if yn == "y":
-                return count
-        count+=1        
-    return -1
-    
-def findMultIndex(allsearch,docNames):
-    indices =   []
-    for i in range(0,len(allsearch)):
-        indices.append(find_index(allsearch[i],docNames))
-    return indices
+
             
 def get_sim_docs(docIndex,docTopics,KL=None):
-    if type(docIndex) is int:
-            docIndex=[docIndex]
 
-    vec1    =   np.zeros(docTopics[0].shape)
-    for i in range(0,len(docIndex)):  
-        vec1    =   np.add(vec1,docTopics[docIndex[i]])
-    scores  =   []
+    vec1    =   docTopics[docIndex]
+#    scores  =   []
 
     l   =   len(docTopics)
-
-    for i in range(0,l):
-        if i not in docIndex:
-            vec2    =   np.array(docTopics[i],dtype=np.float)
-
-            scores.append(-sts.entropy(vec1,vec2))
-        else:
-            scores.append(99999999)
-
-    count=0
     names   = {}
-    for x in scores:
-        user   = 'user_'+str(count + 1) #REMEMBER USERS ARE INDEXED STARTING AT 1
-        names[user]    =   x
-        count+=1
+    for k,v in docTopics.iteritems():
+        if not (k == docIndex):
+            vec2    =   np.array(v,dtype=np.float)
+
+            names[k]    = -sts.entropy(vec1,vec2)
+        else:
+            names[k]    = 1
+
+#    count=0
+#    for x in scores:
+#        user   = 'user_'+str(count + 1) #REMEMBER USERS ARE INDEXED STARTING AT 1
+#        names[user]    =   x
+#        count+=1
     nl= sorted(names.items(),key=operator.itemgetter(1),reverse=True)
     return nl
 

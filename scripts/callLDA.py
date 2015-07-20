@@ -37,7 +37,7 @@ p   =   "../data/processed/"
 l   =   listdir(p)
 fileList    =   [p+f for f in l]
 
-with open("../fileList.txt",'wb') as fl:
+with open("../data/out/fileList.txt",'wb') as fl:
     fl.write('\n'.join(fileList))
 
 #for each document, add to a list
@@ -48,7 +48,7 @@ for fi in fileList:
     
 
 #D is total number of docs to show to the model, K is number of topics
-goal_its    =   80              #number of iterations to run the LDA process
+goal_its    =   40              #number of iterations to run the LDA process
 corp_size   =   len(doc_list)   #number of documents in the corpus
 D           =   corp_size       #number of documents expected to see
 K           =   70              #Default topic value, if none given in parameters
@@ -67,19 +67,13 @@ vocab       =   helper_funcs.read_dict("../data/dictionary.txt") #default dict s
 if len(sys.argv) > 2:
     K           =   int(sys.argv[1])
     vocab       =   vocab = str.split(file(sys.argv[2]).read())
-    if len(sys.argv) > 4:
-        alpha       =   float(sys.argv[3])
-        eta         =   float(sys.argv[4])
-        hyper_param =   "hyperparam/"
-        desc        =   "/"+str(alpha)+"_"+str(eta)
-    else:
-        alpha   =   0.1
-        eta     =   1.
+    alpha   =   0.1
+    eta     =   1.
     if len(sys.argv) == 4:
         folder  =   sys.argv[3]
     saveModel   =   False
     lda         =   onlineldavb.OnlineLDA(vocab,K,D,alpha,eta,1024,0.)
-    print "created LDA with parameters:\nnumwords: "+str(len(vocab))+"\n#topics: "+str(K)+"\nalpha: "+str(alpha)+"\neta: "+str(eta)
+    print "created LDA with parameters:\n#topics: "+str(K)+"\nalpha: "+str(alpha)+"\neta: "+str(eta)
 
 elif len(sys.argv) > 1:
     with open(sys.argv[1],'rb') as f:
@@ -115,6 +109,8 @@ for i in range(lda._updatect,goal_its):
     
     #pickle the model and its output occasionally
     if (i+1) == goal_its:
+        print doc_list[0]
+        print gamma[0]
         if not isdir(folder):
             mkdir(folder)
         with open(folder+"/gamma.pickle",'wb') as f:

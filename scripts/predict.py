@@ -11,6 +11,11 @@ def findNearest(userNum,movie):
         userNum = int(userNum) - 1
         neigh   = lines[userNum]
         print neigh
+    return neigh
+    
+    
+def checkNeigh(movie,neighbors,N):
+    
         
 def main():
     findNearest(2,"154")

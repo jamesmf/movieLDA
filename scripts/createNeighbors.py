@@ -46,11 +46,12 @@ def main():
             #if search contains spaces, it will search on two terms together
             #and by default should sum the two topic vectors"""
     if len(sys.argv) > 1:
-        folder     = sys.argv[1]
+        folder      = sys.argv[1]
         vn          = "../data/dictionary.txt"
         vocab       = str.split(file(vn).read())
-        lambdap    = folder + "lambda.pickle"
+        lambdap     = folder + "lambda.pickle"
         gammap      = folder + "gamma.pickle"
+        fileList    = folder + "fileList.txt"
 
                     
     else:
@@ -87,13 +88,14 @@ def main():
     ###########################################################################      
     """Read in gamma, the document topic distribution"""  
 
-    docTopics = helper_funcs.read_topic_dist(gammap)
+    docTopics = helper_funcs.read_topic_dist(gammap,fileList)
    
     ###########################################################################
     """run through all User documents and find most similar users"""
-    for index in range(0,len(docTopics)):
-        p   = helper_funcs.get_sim_docs(index,docTopics,KL=True)
+    for k,v in docTopics.iteritems():
+        p   = helper_funcs.get_sim_docs(k,docTopics,KL=True)
         out = '|'.join([x[0] for x in p[:75]])
+        
         with open("../data/out/nearest.txt",'a') as f:
             f.write(out+"\n")
 
