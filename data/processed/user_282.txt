@@ -1,1 +1,1 @@
-like_262 like_268 neutral_300 like_305 like_319 neutral_333 neutral_340 like_343 neutral_358 dislike_689 dislike_879 like_890 
+like_262 like_262 like_268 like_268 neutral_300 like_305 like_305 like_319 like_319 neutral_333 neutral_340 like_343 like_343 neutral_358 dislike_689 dislike_689 dislike_879 dislike_879 like_890 like_890 
