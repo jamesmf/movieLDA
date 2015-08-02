@@ -27,16 +27,16 @@ def writeDoc(fields,rating):
     
     
 def makeDocuments(inFolder,ratings):
-    rating  = [3,1,1,1,3]
+
     files   = listdir(inFolder+"train/")
     for fi in files:
         with open(inFolder+"train/"+fi,'rb') as f:
             lines   = f.read().split("\n")
         for line in lines:
-            fields  = line.split("\t")
+            fields  = line.split("::")
             if len(fields) > 1:
                 with open(inFolder+"../processed/user_"+fields[0]+".txt",'a') as f2:
-                    out = writeDoc(fields,rating)
+                    out = writeDoc(fields,ratings)
                     for i in range(0,out[1]):
                         f2.write(out[0])   
                         
