@@ -9,11 +9,9 @@ import sys
 from os import listdir
 
 def main():
-    try:
-        if sys.argv[1] == "num2name":
-            num2name("../data/out/topics.txt")
-    except:
-        makeDocuments("../data/raw/")
+    folder  = sys.argv[1]
+    ratings  = [3,1,1,1,3]
+    makeDocuments("../data/raw/",ratings)
     
 def writeDoc(fields,rating):
     idx = int(fields[2]) - 1
@@ -28,7 +26,7 @@ def writeDoc(fields,rating):
     return out
     
     
-def makeDocuments(inFolder):
+def makeDocuments(inFolder,ratings):
     rating  = [3,1,1,1,3]
     files   = listdir(inFolder+"train/")
     for fi in files:
@@ -51,26 +49,7 @@ def item2user():
         with open("../data/processed/"+b,'wb') as f2:
             f2.write(content)
             
-def num2name(topicsTxt):
-    with open(topicsTxt,'rb') as f:
-        x   = f.read().split("\n")
-    with open("../data/raw/u.item",'rb') as f2:
-        movies  = f2.read().split("\n")
-    lookup  = {}
-    for m in movies:
-        sp  = m.split("|")
-        if len(sp) > 1:
-            lookup[sp[0]]    = sp[1]
-    out = []
-    for y in x:
-        if (y.find("topic") < 0) and (not (y=='')):
-            
-            num     = y[y.find("_")+1:y.find("\t")]
-            out.append(y[:y.find("_")]+lookup[num])
-        else:
-            out.append(y)                
-    with open(topicsTxt.replace("topics","topicsNames"),'wb') as f:
-        f.write('\n'.join(out))
+
     
 if __name__ == "__main__":
     main()
